@@ -28,14 +28,17 @@ app.use(errorHandler);
 
 mongoDb();
 
-app.listen(port, async () => {
-  console.log(`✅ Aanand Sports Server running on http://localhost:${port}`);
-  if (process.env.ENABLE_NGROK === "true") {
-    const url = await ngrok.connect({
-      addr: port,
-      authtoken: process.env.NGROK_AUTH_TOKEN,
-      // subdomain: process.env.NGROK_SUBDOMAIN // must be set for custom subdomain
-    });
-    console.log(`Public URL: ${url}`);
-  }
-});
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  app.listen(port, async () => {
+    console.log(`✅ Aanand Sports Server running on http://localhost:${port}`);
+    if (process.env.ENABLE_NGROK === "true") {
+      const url = await ngrok.connect({
+        addr: port,
+        authtoken: process.env.NGROK_AUTH_TOKEN,
+      });
+      console.log(`Public URL: ${url}`);
+    }
+  });
+}
